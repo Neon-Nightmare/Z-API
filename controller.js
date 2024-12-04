@@ -1,12 +1,6 @@
 const knex = require("knex")(require("./knexfile.js")["development"]);
 
-async function getItem(id) {
-    const x = await knex(`${id.table}`).select("*");
-    return x;
-}
-
-
-//POST
+// CREATE
 
 async function addItem(table, params){
     const x = knex(`${table}`)
@@ -15,24 +9,42 @@ async function addItem(table, params){
     return x;
 }
 
-//DELETE
-async function deleteItem(table, id){
-    const x = knex(`${table}`)
-    .where("id", id).del()
-    return (x)
+// READ 
+async function getItem(id) {
+    const x = await knex(`${id.table}`).select("*");
+    return x;
 }
 
-//UPDATE
+// UPDATE
 async function updateItem(table, id, params){
     const x = knex(`${table}`).where('id', id).update(params)
     .returning(['id','name'])
     return (x)
 }
 
+// DELETE
+async function deleteItem(table, id){
+    const x = knex(`${table}`)
+    .where("id", id).del()
+    return (x)
+}
 
+// CHECK
+
+async function checker(name, email, password){
+    const x = knex(`artists`)
+        .where({
+            name: name,
+            email: email,
+            password: password
+        })
+        .select('name');
+    return (x)
+}
 module.exports = { 
     getItem,
     deleteItem,
     updateItem,
-    addItem
+    addItem,
+    checker
 };
