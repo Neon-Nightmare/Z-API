@@ -5,7 +5,7 @@
 exports.up = function(knex) {
     return knex.schema.createTable('tracks', (table) => {
         table.increments('id'),
-        table.string('name'),
+        table.string('song_name'),
         table.integer('explicit'),
         table.string('artist')
         table.string('featured')

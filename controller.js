@@ -5,7 +5,7 @@ const knex = require("knex")(require("./knexfile.js")["development"]);
 async function addItem(table, params){
     const x = knex(`${table}`)
     .insert([params])
-    .returning(['id', 'name'])
+    .returning(Object.keys(params))
     return x;
 }
 
@@ -15,10 +15,18 @@ async function getItem(id) {
     return x;
 }
 
+async function getSpecific(table, params){
+    const x = await knex(`${table}`)
+    .select('*')
+    .where(params)
+
+    return x;
+}
+
 // UPDATE
 async function updateItem(table, id, params){
     const x = knex(`${table}`).where('id', id).update(params)
-    .returning(['id','name'])
+    .returning(['id'])
     return (x)
 }
 
@@ -32,19 +40,24 @@ async function deleteItem(table, id){
 // CHECK
 
 async function checker(name, email, password){
-    const x = knex(`artists`)
-        .where({
-            name: name,
-            email: email,
-            password: password
-        })
-        .select('name');
+    const x = knex.select('artists.id as artist_id', 'artists.name', 'artists.email', 'album_name', 'image', 'price', 'type', 'info', 'release', 'label', 'albums.id as album_id' )
+    .from('artists')
+    .fullOuterJoin('albums', function (){
+        this.on('artists.name', '=', 'albums.artist')
+    })
+    .where({
+        'artists.name': name, 
+        'artists.email': email, 
+        'artists.password': password
+    })
     return (x)
 }
+
 module.exports = { 
     getItem,
     deleteItem,
     updateItem,
     addItem,
+    getSpecific,
     checker
 };

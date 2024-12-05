@@ -8,6 +8,7 @@ const {
     deleteItem,
     updateItem,
     addItem,
+    getSpecific,
     checker
 } = require('./controller.js');
 
@@ -47,12 +48,25 @@ server.get('/music', (req, res) =>{
         res.status(500).json({ error: 'Failed to read item'})
     })
 })
+
+server.post('/select', (req, res) =>{
+    const {table} = req.body
+
+    getSpecific(table, req.query).then((data) => {
+        console.log(req.query)
+        res.send(data);
+    })
+    .catch((error) => {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to read item'})
+    })
+})
 //--------------------------------------------------------------
 
 
 //-UPDATE-------------------------------------------------------
 server.patch('/update', (req, res) => {
-
+    
     const { table, id } = req.body;
 
     updateItem(table, id, req.query)
